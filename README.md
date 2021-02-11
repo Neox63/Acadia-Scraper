@@ -10,6 +10,12 @@
 </p>
 
 > This is a NodeJS built tool to scrap http://www.acadia-info.com/, it retrieve data and exports it as an Excel file. This is a public version (and open source ofc).
+
+Check also : 
+
+- https://github.com/Neox63/Asialand-Scraper
+- https://github.com/Neox63/Mobilax-Scraper
+- https://github.com/Neox63/Utopya-Scraper
 ## Install
 
 ```sh
