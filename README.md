@@ -9,7 +9,7 @@
   </a>
 </p>
 
-## IMPORTANT : **Due to recent incidents at OVH's data centers, this version became obsolete, a new one is coming soon ! (#1) **
+## IMPORTANT : **Due to recent incidents at OVH's data centers, this version became obsolete, a new one is coming soon ! (Issue #1) **
 
 
 
