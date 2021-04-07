@@ -4,9 +4,6 @@
   <a href="#" target="_blank">
     <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" />
   </a>
-  <a href="https://twitter.com/ma_this_" target="_blank">
-    <img alt="Twitter: ma_this_" src="https://img.shields.io/twitter/follow/ma_this_.svg?style=social" />
-  </a>
 </p>
 
 > This is a NodeJS built tool to scrap http://www.acadia-info.com/, it retrieve data and exports it as an Excel file. This is a public version (and open source ofc).
