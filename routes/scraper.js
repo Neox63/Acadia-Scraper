@@ -10,10 +10,10 @@ const scraper = {
         let scrapedData = [];
 
         const scrapeCurrentPage = async () => {
-            await page.waitForSelector('.main-content-inner');
+            await page.waitForSelector('#products');
             
-            let urls = await page.$$eval('.product_list > li', links => {
-                links = links.map((el) => el.querySelector('.product_img_link').href);
+            let urls = await page.$$eval('.products > .item-product', links => {
+                links = links.map((el) => el.querySelector('.product-title > a').href);
 
                 return links;
             });
@@ -27,62 +27,76 @@ const scraper = {
                 await newPage.goto(link);
 
                 try {
-                    dataObject['title'] = await newPage.$eval('h2', text => text.textContent);
+                    dataObject['title'] = await newPage.$eval('h1.h1', text => text.textContent);
 
                 } catch (e) {
                     dataObject['title'] = "Titre non disponible";
                 }
 
                 try {
-                    dataObject['image'] = await newPage.$eval('#bigpic', img => img.src);
+                    dataObject['image'] = await newPage.$eval('#zoom', img => img.src);
 
                 } catch (e) {
                     dataObject['image'] = "Image non disponible";
                 }
 
                 try {
-                    dataObject['sku'] = await newPage.$eval('ul.product-refence-list > li:nth-child(2) > span', text => text.textContent);
+                    dataObject['sku'] = await newPage.$eval('.befor_product_features :nth-child(2)', text => text.textContent.substring(text.textContent.indexOf(":") + 2));
 
                 } catch (e) {
                     dataObject['sku'] = "SKU non disponible";
                 }
 
                 try {
-                    dataObject['ean'] = await newPage.$eval('ul.product-refence-list > li:nth-child(3) > span', text => text.textContent);
+                    dataObject['ean'] = await newPage.$eval('.befor_product_features :nth-child(1)', text => text.textContent.substring(text.textContent.indexOf(":") + 2));
 
                 } catch (e) {
                     dataObject['ean'] = "EAN non disponible";
                 }
 
                 try {
-                    dataObject['price'] = await newPage.$eval('.our_price_display', text => text.textContent);
+                    dataObject['price'] = await newPage.$eval('.current-price :nth-child(2)', text => text.textContent);
 
                 } catch (e) {
                     dataObject['price'] = "Prix non disponible";
                 }
 
                 try {
-                    dataObject['stock'] = await newPage.$eval('#quantityAvailable', text => text.textContent);
+                    dataObject['stock'] = await newPage.$eval('.message-availability > span', text => text.textContent);
 
                 } catch (e) {
-                    dataObject['stock'] = "Stock inconnu";
+                    dataObject['stock'] = "Plus de 200";
                 }
 
                 try {
-                    dataObject['weight'] = await newPage.$eval('ul.product-refence-list > li:nth-child(4) > span', text => text.textContent);
+                    dataObject['weight'] = await newPage.$eval('.befor_product_features :nth-child(3)', text => text.textContent.substring(text.textContent.indexOf(":") + 2));
 
                 } catch (e) {
                     dataObject['weight'] = "Poid non disponible";
                 }
 
                 try {
-                    dataObject['description'] = await newPage.$eval('#short_description_content', text => text.textContent);
+                    dataObject['description'] = await newPage.$eval('.product-d > table > tbody > :nth-child(2)', text => text.textContent);
 
                 } catch (e) {
                     dataObject['description'] = "Description non disponible";
                 }
 
-                console.log(`Product ${this.index} has been scrapped successfully [~${Date.now() - msAtStart} ms]`);
+                try {
+                    dataObject['categorie'] = await newPage.$$eval('.breadcrumb > ol > li > a > span', el => el[2].textContent);
+
+                } catch (e) {
+                    dataObject['categorie'] = "Catégorie non disponible";
+                }
+
+                try {
+                    dataObject['sous_categorie_1'] = await newPage.$$eval('.breadcrumb > ol > li > a > span', el => el[3].textContent);
+
+                } catch (e) {
+                    dataObject['sous_categorie_1'] = "Sous Catégorie non disponible";
+                }
+
+                console.log(`[Acadia] - Product ${this.index} has been scrapped successfully [~${Date.now() - msAtStart} ms]`);
                 this.index++;
 
                 resolve(dataObject);
@@ -99,18 +113,18 @@ const scraper = {
                 let nextButtonExist = true;
 
                 try {
-                    const nextButton = await page.$eval('.pagination_next.disabled', a => a.textContent);
-                    console.log("Nothing else to scrap there, going forward !");
-                    this.index = 1;
-                    this.pageIndex = 2;
-                    nextButtonExist = false;
+                    const nextButton = await page.$eval('a.next', a => a.textContent);
+                    nextButtonExist = true;
     
                 } catch (e) {
-                    nextButtonExist = true;  
+                    nextButtonExist = false; 
+                    console.log("Nothing else to scrap there, going forward !");
+                    this.index = 1;
+                    this.pageIndex = 2; 
                 }
     
                 if (nextButtonExist) {
-                    await page.click('.pagination_next');
+                    await page.click('a.next');
                     this.pageIndex++;
                     console.log(`Navigating to the next page... (${this.pageIndex})`);
     
